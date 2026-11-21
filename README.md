@@ -1,32 +1,33 @@
 # 🛡️ NexGuard
-**Advanced Discord Moderation & Security Bot**
+**Discord Moderation & Server Security Bot**
 
 **MODERATE • PROTECT • SECURE**
 
-NexGuard is planned as an all-in-one Discord bot focused on reliable moderation, configurable automod, server protection, security monitoring, and incident recovery.
+NexGuard is a Node.js / Discord.js bot project for moderation, automod, server safety alerts, welcome tools, audit logging, and best-effort server structure recovery.
 
 ## Project status
-🚧 **Early development / planning.** Features in the roadmap are planned and are not yet represented as working commands. This repository is private.
+🚧 **Feature-rich MVP under development.** Core moderation commands and several security/configuration modules now have code in the repository. Nothing has been live-tested in a Discord server yet, and this is not production-ready.
 
-## Planned editions
-- **Free:** Essential moderation, automod, server safety alerts, welcome tools, and basic logs.
-- **Premium:** Advanced security automation, anti-nuke safeguards, configurable recovery backups, deeper audit reporting, and customization.
+## Editions
+- **Free foundation:** moderation, basic automod, join/leave and message logs, welcome configuration, security alerts, utilities, and manual backups.
+- **Premium roadmap:** advanced containment, scheduled backups, full recovery, reports, customization, premium gating, and billing. Premium access records exist, but paid subscriptions and feature gating are not implemented yet.
 
-See [FEATURES.md](FEATURES.md) for the roadmap and [SECURITY.md](SECURITY.md) for the security design.
+See [FEATURES.md](FEATURES.md) for the exact implementation checklist and [SECURITY.md](SECURITY.md) for safeguards and limitations.
 
-## Core principles
-- Least-privilege permissions wherever possible.
-- Secure handling of bot tokens and payment credentials.
-- Clear moderation logs and accountable actions.
-- Conservative automated responses to reduce false positives.
-- No claim of recovery unless the operation is verified.
+## Current code
+- Slash-command registration and SQLite persistence.
+- Ban, unban, kick, timeout, warn, purge, lock and related moderation tools.
+- Basic anti-spam, configurable link/word/mention/caps checks.
+- Welcome/goodbye messages and automatic member role.
+- Join/leave, message edit/delete, audit-log and webhook-change alerts.
+- Join-spike and repeated destructive-action alerts (alert-only).
+- Manual structure backups, recovery preview and best-effort recreation of missing roles/channels.
+- Owner-only manual premium grant/revoke command.
 
-## Current MVP
-The repository now contains a Node.js / Discord.js starter bot with slash-command registration, SQLite warning storage, moderation commands, a basic in-memory anti-spam threshold, and optional moderation logs. These components still need installation and live Discord testing before production use.
+## Important limitations
+The bot has not yet been installed or tested in a live server. Anti-raid and anti-nuke alerts do not automatically punish users or lock down the server. Restore is partial: deleted messages, integrations, webhooks, and guaranteed permission-overwrite recovery are not supported. Website, OAuth dashboard, payment processing, scheduled backups, premium feature gating, and advanced recovery remain unfinished.
 
 See [docs/SETUP.md](docs/SETUP.md) to configure and run the bot, and [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the code layout.
-
-Hosting, dashboard, and payment provider have not yet been selected.
 
 **Never commit bot tokens, passwords, API keys, database credentials, or payment secrets.** Use environment variables and the hosting provider's secret manager.
 
