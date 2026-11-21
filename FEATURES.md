@@ -1,19 +1,19 @@
 # NexGuard Feature Roadmap
 
-> Status: planned. A feature is not available until it has been implemented, tested, and documented.
+> Status: early MVP. Checked items have initial code in the repository but still require installation and live-server testing. Unchecked items remain planned.
 
 ## Free edition
 
 ### Moderation
-- [ ] /ban and /unban
-- [ ] /kick
-- [ ] /timeout and /untimeout
-- [ ] /warn and /warnings
-- [ ] /clear
-- [ ] /lock and /unlock
+- [x] /ban and /unban
+- [x] /kick
+- [x] /timeout and /untimeout
+- [x] /warn and /warnings
+- [x] /clearwarnings and /purge (separate commands)
+- [x] /lock and /unlock
 
 ### Automod
-- [ ] Anti-spam and anti-flood
+- [x] Basic in-memory anti-spam threshold (not advanced anti-flood)
 - [ ] Anti-link filtering with configurable allowlists
 - [ ] Bad-word filter
 - [ ] Mention-spam protection
@@ -30,7 +30,7 @@
 - [ ] Basic dangerous-action alerts
 
 ### Logs and utilities
-- [ ] Moderation action logs
+- [x] Basic moderation action logs (configured log channel)
 - [ ] Member join/leave logs
 - [ ] Message edit/delete logs where Discord makes the event available
 - [ ] /userinfo, /serverinfo, /avatar, /ping, /help
