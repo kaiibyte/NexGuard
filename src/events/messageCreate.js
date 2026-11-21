@@ -13,7 +13,7 @@ const cleanupTimer = setInterval(() => {
     if (fresh.length) recent.set(key, fresh);
     else recent.delete(key);
   }
-}, 10 *  60 * 1000);
+}, 10 * 60 * 1000);
 cleanupTimer.unref?.();
 
 module.exports = {
@@ -30,7 +30,7 @@ module.exports = {
 
     let reason = null;
 
-    if (cfg.antiLink && /(https?:\\/\\/)/i.test(message.content)) reason = "Links are disabled";
+    if (cfg.antiLink && (message.content.toLowerCase().includes("http://") || message.content.toLowerCase().includes("https://"))) reason = "Links are disabled";
     else if (cfg.antiInvite && /(discord\\.gg\\/|discord(?:app)?\\.com\\/invite\\/)/i.test(message.content)) reason = "Discord invites are disabled";
     else if ((message.mentions.users.size + message.mentions.roles.size) > cfg.maxMentions) reason = "Mention limit exceeded";
     else if (cfg.badWords.some(word => word && message.content.toLowerCase().includes(word))) reason = "Blocked word detected";
