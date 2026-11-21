@@ -1,6 +1,7 @@
 const { SlashCommandBuilder, PermissionFlagsBits } = require("discord.js");
 const settings = require("../services/guild-settings");
 const { log } = require("../utils/logger");
+const { requirePremium } = require("../services/premium");
 module.exports = {
  data: new SlashCommandBuilder().setName("security").setDescription("Configure NexGuard server protection.")
  .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
@@ -12,6 +13,7 @@ module.exports = {
  .addSubcommand(s=>s.setName("unlockdown").setDescription("Restore @everyone SendMessages after a NexGuard lockdown.")),
  async execute(i) {
   const sub=i.options.getSubcommand(), cfg=settings.get(i.guildId);
+  if(["antinuke","threshold","lockdown","trustedadmin"].includes(sub) && !requirePremium(i,"Advanced anti-nuke protection")) return;
   if(sub==="status") return i.reply({content:`Anti-nuke: **${cfg.antiNukeEnabled?"On":"Off"}**\nThreshold: **${cfg.antiNukeThreshold} actions**\nAuto-lockdown: **${cfg.autoLockdown?"On":"Off"}**\nTrusted admins: **${(cfg.trustedAdminIds||[]).length}**`,ephemeral:true});
   if(sub==="antinuke"){settings.set(i.guildId,{antiNukeEnabled:i.options.getBoolean("enabled",true)});return i.reply({content:"Anti-nuke setting saved.",ephemeral:true});}
   if(sub==="threshold"){settings.set(i.guildId,{antiNukeThreshold:i.options.getInteger("count",true)});return i.reply({content:"Threshold saved.",ephemeral:true});}
