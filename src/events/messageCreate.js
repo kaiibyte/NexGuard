@@ -29,21 +29,35 @@ module.exports = {
     ) return;
 
     let reason = null;
+    const content = message.content.toLowerCase();
 
-    if (cfg.antiLink && (message.content.toLowerCase().includes("http://") || message.content.toLowerCase().includes("https://"))) reason = "Links are disabled";
-    else if (cfg.antiInvite && /(discord\\.gg\\/|discord(?:app)?\\.com\\/invite\\/)/i.test(message.content)) reason = "Discord invites are disabled";
-    else if ((message.mentions.users.size + message.mentions.roles.size) > cfg.maxMentions) reason = "Mention limit exceeded";
-    else if (cfg.badWords.some(word => word && message.content.toLowerCase().includes(word))) reason = "Blocked word detected";
-    else {
+    if (cfg.antiLink && (content.includes("http://") || content.includes("https://"))) {
+      reason = "Links are disabled";
+    } else if (
+      cfg.antiInvite &&
+      (content.includes("discord.gg/") || content.includes("discord.com/invite/") || content.includes("discordapp.com/invite/"))
+    ) {
+      reason = "Discord invites are disabled";
+    } else if ((message.mentions.users.size + message.mentions.roles.size) > cfg.maxMentions) {
+      reason = "Mention limit exceeded";
+    } else if (cfg.badWords.some(word => word && content.includes(word))) {
+      reason = "Blocked word detected";
+    } else {
       const letters = message.content.replace(/[^a-z]/gi, "");
-      if (letters.length >= 12 && message.content.length && letters.replace(/[^A-Z]/g, "").length / letters.length * 100 > cfg.maxCapsPercent) {
+      if (
+        letters.length >= 12 &&
+        message.content.length &&
+        letters.replace(/[^A-Z]/g, "").length / letters.length * 100 > cfg.maxCapsPercent
+      ) {
         reason = "Excessive caps";
       }
     }
 
     if (reason) {
       await message.delete().catch(() => null);
-      const reply = await message.channel.send({ content: message.author + ", " + reason.toLowerCase() + "." }).catch(() => null);
+      const reply = await message.channel.send({
+        content: message.author + ", " + reason.toLowerCase() + "."
+      }).catch(() => null);
       if (reply) setTimeout(() => reply.delete().catch(() => null), 5000);
       await log(message.guild, "Automod action", message.author.tag + ": " + reason, 0xdc2626);
       return;
@@ -60,8 +74,16 @@ module.exports = {
     }
 
     recent.delete(key);
-    await message.member.timeout(config.spam.timeoutMinutes * 60000, "NexGuard anti-spam threshold exceeded")
-      .then(() => log(message.guild, "Anti-spam timeout", message.author.tag + " timed out for " + config.spam.timeoutMinutes + " minutes.", 0xdc2626))
+    await message.member.timeout(
+      config.spam.timeoutMinutes * 60000,
+      "NexGuard anti-spam threshold exceeded"
+    )
+      .then(() => log(
+        message.guild,
+        "Anti-spam timeout",
+        message.author.tag + " timed out for " + config.spam.timeoutMinutes + " minutes.",
+        0xdc2626
+      ))
       .catch(error => console.error("Anti-spam action failed:", error.message));
   }
 };
