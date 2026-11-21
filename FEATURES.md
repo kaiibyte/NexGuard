@@ -43,7 +43,7 @@
 - [ ] Premium feature gating and self-service entitlements
 
 ## Owner / operator
-- [x] Manual per-server premium grant/revoke command (host must set BOT_OWNER_ID and BOT_OWNER_KEY)
+- [x] Manual per-server premium grant/revoke command (host must set BOT_OWNER_ID)
 - [x] Per-server premium status
 - [ ] Web-based owner dashboard, guild directory, global announcements and maintenance controls
 - [ ] Health monitoring, error reporting and audit dashboard
