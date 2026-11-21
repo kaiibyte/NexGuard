@@ -40,8 +40,10 @@
 
 ## Owner / operator
 - [x] Owner-only manual per-server premium grant/revoke and status
-- [ ] Web owner dashboard, guild directory, global announcements, maintenance controls
-- [ ] Health monitoring, structured error reporting and audit dashboard
+- [x] Private Discord owner control center: overview, server directory, Premium grant/revoke, global announcements, maintenance mode, server/user blacklist and owner audit log
+- [x] Persistent owner settings, blacklist records and owner-action audit trail
+- [ ] Web owner dashboard, staff delegation, detailed error dashboard and external health monitoring
+- [ ] Hosting-provider remote restart/auto-restart and off-host database backup controls
 
 ## Website and billing
 - [ ] Landing page and Add to Discord flow
