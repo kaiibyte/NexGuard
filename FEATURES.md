@@ -1,62 +1,56 @@
 # NexGuard Feature Roadmap
 
-> Status: expanding MVP. A checked item has code in the repository, but still needs live Discord testing. A planned item is not implemented yet.
+> Status key: **Implemented in code** means code exists but is not yet proven in a live Discord server. **External setup required** means credentials, hosting, or a provider are still needed. Nothing is marked production-ready without testing.
 
 ## Free edition
 ### Moderation
 - [x] /ban, /unban, /kick, /timeout, /untimeout
 - [x] /warn, /warnings, /clearwarnings, /purge
-- [x] /lock, /unlock
-- [x] /report
+- [x] /lock, /unlock, /report
+- [x] /userinfo, /serverinfo, /avatar, /ping, /help, /stats
 ### Automod
-- [x] Basic anti-spam rate threshold (in-memory; resets on restart)
-- [x] Configurable anti-link and Discord-invite filtering
-- [x] Configurable blocked-word list
-- [x] Mention limit and configurable excessive-caps threshold
-- [x] Trusted-role automod exemptions
-- [ ] Invite allowlists and per-channel exemptions
-- [ ] Configurable warning/escalation ladder and advanced flood detection
-### Server protection and logs
-- [x] Member join/leave logs
+- [x] Basic anti-spam rate threshold
+- [x] Configurable anti-link and Discord invite filtering
+- [x] Blocked-word list, mention threshold, caps threshold
+- [x] Trusted-role exemptions
+- [ ] Invite allowlist and per-channel exemptions
+- [ ] Persistent escalation ladder, flood detection and temp bans
+### Community and logs
 - [x] Welcome/goodbye channel and auto-role configuration
-- [x] Message edit/delete logs when Discord provides cached content
-- [x] Audit-log alerts for channel/role deletion, bans, kicks, role/channel changes and webhook changes
-- [x] Owner alert after repeated destructive audit actions (alert only; no automatic punishment)
-- [x] Basic join-spike alert and new-account-age risk signal (in-memory, alert-only)
-- [ ] Configurable anti-raid thresholds and automatic lockdown
-- [ ] Automatic safe response policies and trusted-admin allowlists
-- [ ] Bot-add / permission escalation detection with actor confidence scoring
-### Utilities
-- [x] /ping, /help, /userinfo, /serverinfo, /avatar, /stats
-- [x] /automod configuration
-- [x] /welcome configuration
-- [x] /backup create and /backup list
-- [x] /restore preview and owner/admin-confirmed best-effort restore
+- [x] Member join/leave, cached message edit/delete logs
+- [x] Moderation/security audit logging
+- [x] Basic join-spike and new-account-age risk alerts
+- [ ] Configurable raid thresholds, bot-add review workflow and per-channel log routing
+### Backup
+- [x] Manual backup create/list and restore preview
+- [x] Best-effort recreation of missing roles/categories/channels
+- [ ] Full permission overwrite restoration, position reconciliation, channel topic/slowmode/NSFW completeness
+- [ ] External encrypted backup storage and retention UI
 
 ## Premium edition
-- [ ] Advanced anti-raid and configurable thresholds
-- [ ] Anti-nuke automatic containment policies
-- [ ] Scheduled automatic backups and retention controls
-- [ ] Full role/channel permission overwrite restoration and position reconciliation
-- [ ] Recovery of additional supported server settings
-- [ ] Custom automod rules, warning thresholds, temp bans and scheduled moderation
-- [ ] Staff activity reports, moderation statistics and exportable reports
+- [x] Configurable anti-nuke detection threshold and trusted-admin allowlist
+- [x] Optional conservative automatic text-channel lockdown after threshold
+- [x] Scheduled backup interval setting (6/12/24h) and periodic scheduler
+- [ ] Premium feature gating across every premium command and configuration
+- [ ] Full backup fidelity and safe interactive restore confirmation
+- [ ] Advanced custom automod rules, warning ladders, scheduled moderation and temp bans
+- [ ] Staff activity reports, moderation analytics and export
 - [ ] Custom embeds, welcome templates and images
-- [ ] Premium feature gating and self-service entitlements
+- [ ] Self-service subscription entitlement lifecycle
 
 ## Owner / operator
-- [x] Manual per-server premium grant/revoke command (host must set BOT_OWNER_ID)
-- [x] Per-server premium status
-- [ ] Web-based owner dashboard, guild directory, global announcements and maintenance controls
-- [ ] Health monitoring, error reporting and audit dashboard
+- [x] Owner-only manual per-server premium grant/revoke and status
+- [ ] Web owner dashboard, guild directory, global announcements, maintenance controls
+- [ ] Health monitoring, structured error reporting and audit dashboard
 
 ## Website and billing
 - [ ] Landing page and Add to Discord flow
 - [ ] Discord OAuth and server dashboard
-- [ ] Monthly/yearly subscription plans
-- [ ] Payment provider integration with server-side webhook verification
-- [ ] Automatic activation, expiration, renewals and payment history
-- [ ] Documentation, support and public status pages
+- [ ] Monthly/yearly plans
+- [ ] Payment-provider adapter and verified signed webhook
+- [ ] Activation, expiration, renewal, refund and payment history
+- [ ] Docs, support and public status pages
+- [x] Secure integration requirements documented in docs/WEB-DASHBOARD-BILLING.md
 
-## Recovery limitations
-Backups cover a best-effort subset of server structure. Restore currently recreates missing roles/categories/channels; it does not restore deleted messages, guarantee permission overwrite recovery, restore integrations/webhooks, or reverse every Discord setting. Preview before applying and keep backups outside the bot host too.
+## Safety and recovery limits
+Discord does not provide a universal undo. Deleted messages cannot be restored. Audit-log actor attribution may be delayed or unavailable. Automatic lockdown only blocks @everyone sending messages in standard text/announcement channels; it does not remove roles or ban users. Restore is best-effort and must be previewed. Keep off-host backups before trusting recovery.
