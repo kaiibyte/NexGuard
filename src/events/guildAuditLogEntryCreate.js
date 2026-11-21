@@ -1,6 +1,3 @@
-const {AuditLogEvent}=require("discord.js");const {log}=require("../utils/logger");const counts=new Map();
-const destructive=new Set([AuditLogEvent.ChannelDelete,AuditLogEvent.RoleDelete,AuditLogEvent.MemberBanAdd,AuditLogEvent.MemberKick]);
-module.exports={name:"guildAuditLogEntryCreate",async execute(entry,guild){const actorId=entry.executorId||"unknown";const target=entry.targetId||"unknown";const name=String(entry.action);await log(guild,"Security audit: "+name,"Actor: <@"+actorId+"> ("+actorId+")\\nTarget: "+target+"\\nAudit entry: "+entry.id+"\\nReview this action immediately. Discord audit attribution may be delayed.",0xdc2626);
- if(!destructive.has(entry.action))return;const key=guild.id+":"+actorId;const now=Date.now();const recent=(counts.get(key)||[]).filter(x=>now-x.time<10000);recent.push({time:now,action:entry.action});counts.set(key,recent);
- if(recent.length>=3){counts.delete(key);const owner=await guild.fetchOwner().catch(()=>null);if(owner)await owner.send("🚨 **NexGuard anti-nuke warning**\\nThree destructive audit actions were recorded within 10 seconds in **"+guild.name+"**. Actor: "+actorId+". NexGuard has alerted you but has not automatically removed permissions. Review audit logs and restore from a recent /backup.").catch(()=>null);await log(guild,"🚨 Possible raid / nuke",actorId+" triggered "+recent.length+" destructive actions in 10 seconds. Owner alerted; no automatic punishment was applied.",0x991b1b);}
-}};
+const {record}=require("../services/anti-nuke");
+const {log}=require("../utils/logger");
+module.exports={name:"guildAuditLogEntryCreate",async execute(entry,guild){const actor=entry.executorId||"unknown";await log(guild,"Security audit: "+String(entry.action),`Actor: <@${actor}> (${actor})\nTarget: ${entry.targetId||"unknown"}\nAudit entry: ${entry.id}\nAudit attribution can be delayed; verify before acting.`,0xdc2626);await record(entry,guild).catch(error=>console.error("Anti-nuke handler:",error.message));}};
