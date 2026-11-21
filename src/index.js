@@ -54,6 +54,15 @@ for (const file of fs.readdirSync(path.join(__dirname, "events")).filter(file =>
   else client.on(event.name, handler);
 }
 
+// Set a default presence after Discord confirms the bot is ready.
+client.once("ready", () => {
+  client.user.setPresence({
+    activities: [{ name: "over server security", type: 3 }],
+    status: "online"
+  });
+  console.log(`NexGuard is online as ${client.user.tag}`);
+});
+
 process.on("unhandledRejection", error => console.error("Unhandled rejection:", error));
 
 function shutdown() {
