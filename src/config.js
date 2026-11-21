@@ -9,6 +9,7 @@ function required(name) {
 module.exports = {
   token: () => required("DISCORD_TOKEN"),
   clientId: () => required("CLIENT_ID"),
+  ownerId: process.env.BOT_OWNER_ID || null,
   guildId: process.env.GUILD_ID || null,
   logChannelId: process.env.LOG_CHANNEL_ID || null,
   databasePath: process.env.DATABASE_PATH || "./data/nexguard.sqlite",
