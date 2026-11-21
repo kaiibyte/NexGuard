@@ -8,7 +8,7 @@ module.exports = {
       .setTitle("🛡️ NexGuard Help")
       .setDescription("Moderation and security tools currently available.")
       .addFields(
-        { name: "Moderation", value: "`/ban` `/kick` `/timeout` `/warn` `/warnings` `/clearwarnings` `/purge` `/lock` `/unlock`" },
+        { name: "Moderation", value: "`/ban` `/unban` `/kick` `/timeout` `/untimeout` `/warn` `/warnings` `/clearwarnings` `/purge` `/lock` `/unlock`" },
         { name: "Utility", value: "`/ping` `/help`" }
       )
       .setFooter({ text: "MODERATE • PROTECT • SECURE" });
