@@ -1,5 +1,10 @@
-const {Client,Collection,GatewayIntentBits,Partials}=require("discord.js");const fs=require("node:fs");const path=require("node:path");const config=require("./config");const database=require("./database");
+const {Client,Collection,GatewayIntentBits,Partials}=require("discord.js");
+const fs=require("node:fs");const path=require("node:path");const config=require("./config");const database=require("./database");const scheduler=require("./services/backup-scheduler");
 const client=new Client({intents:[GatewayIntentBits.Guilds,GatewayIntentBits.GuildMembers,GatewayIntentBits.GuildModeration,GatewayIntentBits.GuildMessages,GatewayIntentBits.MessageContent],partials:[Partials.Message,Partials.Channel,Partials.GuildMember]});
-client.commands=new Collection();for(const file of fs.readdirSync(path.join(__dirname,"commands")).filter(f=>f.endsWith(".js"))){const command=require(path.join(__dirname,"commands",file));client.commands.set(command.data.name,command);}
+client.commands=new Collection();
+for(const file of fs.readdirSync(path.join(__dirname,"commands")).filter(f=>f.endsWith(".js"))){const command=require(path.join(__dirname,"commands",file));client.commands.set(command.data.name,command);}
 for(const file of fs.readdirSync(path.join(__dirname,"events")).filter(f=>f.endsWith(".js"))){const event=require(path.join(__dirname,"events",file));const handler=(...args)=>event.execute(...args,client);if(event.once)client.once(event.name,handler);else client.on(event.name,handler);}
-process.on("unhandledRejection",e=>console.error("Unhandled rejection:",e));function shutdown(){database.close();client.destroy();process.exit(0);}process.on("SIGINT",shutdown);process.on("SIGTERM",shutdown);client.login(config.token()).catch(error=>{console.error("Login failed. Check DISCORD_TOKEN and bot settings:",error.message);process.exit(1);});
+process.on("unhandledRejection",e=>console.error("Unhandled rejection:",e));
+function shutdown(){scheduler.stop();database.close();client.destroy();process.exit(0);}
+process.on("SIGINT",shutdown);process.on("SIGTERM",shutdown);
+client.login(config.token()).catch(error=>{console.error("Login failed. Check DISCORD_TOKEN and bot settings:",error.message);process.exit(1);});
