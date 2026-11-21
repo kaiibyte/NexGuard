@@ -1,0 +1,2 @@
+const {SlashCommandBuilder,EmbedBuilder}=require("discord.js");
+module.exports={data:new SlashCommandBuilder().setName("avatar").setDescription("Show a user's avatar.").addUserOption(o=>o.setName("user").setDescription("User")),async execute(i){const u=i.options.getUser("user")||i.user;const url=u.displayAvatarURL({size:1024,extension:"png"});return i.reply({embeds:[new EmbedBuilder().setTitle(u.tag+"'s avatar").setImage(url).setColor(0x7c3aed)]});}};
