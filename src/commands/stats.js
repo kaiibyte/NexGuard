@@ -1,0 +1,2 @@
+const {SlashCommandBuilder,PermissionFlagsBits}=require("discord.js");
+module.exports={data:new SlashCommandBuilder().setName("stats").setDescription("Show NexGuard status and server statistics.").setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild),async execute(i){const c=i.client;return i.reply({content:"**NexGuard status**\nGuilds: "+c.guilds.cache.size+"\nUptime: "+Math.floor(c.uptime/60000)+" minutes\nPing: "+Math.round(c.ws.ping)+" ms\nNode: "+process.version,ephemeral:true});}};
