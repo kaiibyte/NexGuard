@@ -1,0 +1,2 @@
+const settings=require("../services/guild-settings");const {log}=require("../utils/logger");
+module.exports={name:"guildMemberRemove",async execute(member){const cfg=settings.get(member.guild.id);if(cfg.goodbyeChannelId){const ch=member.guild.channels.cache.get(cfg.goodbyeChannelId);if(ch?.isTextBased())await ch.send(member.user.tag+" left the server.").catch(()=>null);}await log(member.guild,"Member left",member.user.tag+" ("+member.id+")",0x64748b);}};
