@@ -10,9 +10,10 @@
 - [x] /report
 ### Automod
 - [x] Basic anti-spam rate threshold (in-memory; resets on restart)
-- [x] Configurable anti-link toggle
+- [x] Configurable anti-link and Discord-invite filtering
 - [x] Configurable blocked-word list
-- [x] Mention limit and excessive-caps checks
+- [x] Mention limit and configurable excessive-caps threshold
+- [x] Trusted-role automod exemptions
 - [ ] Invite allowlists and per-channel exemptions
 - [ ] Configurable warning/escalation ladder and advanced flood detection
 ### Server protection and logs
@@ -21,7 +22,8 @@
 - [x] Message edit/delete logs when Discord provides cached content
 - [x] Audit-log alerts for channel/role deletion, bans, kicks, role/channel changes and webhook changes
 - [x] Owner alert after repeated destructive audit actions (alert only; no automatic punishment)
-- [x] Basic join-spike alert and new-account-age risk signal (in-memory, alert-only)\n- [ ] Configurable anti-raid thresholds and automatic lockdown
+- [x] Basic join-spike alert and new-account-age risk signal (in-memory, alert-only)
+- [ ] Configurable anti-raid thresholds and automatic lockdown
 - [ ] Automatic safe response policies and trusted-admin allowlists
 - [ ] Bot-add / permission escalation detection with actor confidence scoring
 ### Utilities
