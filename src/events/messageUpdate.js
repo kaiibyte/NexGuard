@@ -1,0 +1,2 @@
+const {log}=require("../utils/logger");
+module.exports={name:"messageUpdate",async execute(oldMessage,newMessage){if(!newMessage.guild||newMessage.author?.bot||oldMessage.content===newMessage.content)return;await log(newMessage.guild,"Message edited","Author: "+(newMessage.author?.tag||"Unknown")+"\nChannel: <#"+newMessage.channelId+">\nBefore: "+(oldMessage.content||"[uncached]")+"\nAfter: "+(newMessage.content||"[empty]"),0xf59e0b);}};
