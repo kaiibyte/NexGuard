@@ -1,0 +1,2 @@
+const {log}=require("../utils/logger");
+module.exports={name:"webhookUpdate",async execute(channel){await log(channel.guild,"Webhook configuration changed","A webhook was created, updated or removed in <#"+channel.id+">. Review Discord audit logs to identify the actor.",0xdc2626);}};
