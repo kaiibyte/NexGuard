@@ -5,7 +5,7 @@
   "description": "NexGuard - Discord moderation and server security bot",
   "main": "src/index.js",
   "scripts": {
-    "start": "node src/index.js",
+    "start": "node --max-old-space-size=320 src/index.js",
     "dev": "node --watch src/index.js",
     "deploy:commands": "node src/deploy-commands.js",
     "check": "node scripts/check.js"
