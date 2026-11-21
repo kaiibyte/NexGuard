@@ -1,101 +1,60 @@
 # NexGuard Feature Roadmap
 
-> Status: early MVP. Checked items have initial code in the repository but still require installation and live-server testing. Unchecked items remain planned.
+> Status: expanding MVP. A checked item has code in the repository, but still needs live Discord testing. A planned item is not implemented yet.
 
 ## Free edition
-
 ### Moderation
-- [x] /ban and /unban
-- [x] /kick
-- [x] /timeout and /untimeout
-- [x] /warn and /warnings
-- [x] /clearwarnings and /purge (separate commands)
-- [x] /lock and /unlock
-
+- [x] /ban, /unban, /kick, /timeout, /untimeout
+- [x] /warn, /warnings, /clearwarnings, /purge
+- [x] /lock, /unlock
+- [x] /report
 ### Automod
-- [x] Basic in-memory anti-spam threshold (not advanced anti-flood)
-- [ ] Anti-link filtering with configurable allowlists
-- [ ] Bad-word filter
-- [ ] Mention-spam protection
-- [ ] Excessive-caps detection
-- [ ] Configurable warnings and escalation actions
-
-### Server protection
-- [ ] Join and leave alerts
-- [ ] Basic anti-raid detection
-- [ ] Suspicious-account signals
-- [ ] Invite filtering
-- [ ] Bot-add alerts
-- [ ] Mass-mention protection
-- [ ] Basic dangerous-action alerts
-
-### Logs and utilities
-- [x] Basic moderation action logs (configured log channel)
-- [ ] Member join/leave logs
-- [ ] Message edit/delete logs where Discord makes the event available
-- [ ] /userinfo, /serverinfo, /avatar, /ping, /help
-
-### Welcome
-- [ ] Custom welcome and goodbye messages
-- [ ] Welcome embeds
-- [ ] Configurable welcome channel
-- [ ] Optional automatic member roles
+- [x] Basic anti-spam rate threshold (in-memory; resets on restart)
+- [x] Configurable anti-link toggle
+- [x] Configurable blocked-word list
+- [x] Mention limit and excessive-caps checks
+- [ ] Invite allowlists and per-channel exemptions
+- [ ] Configurable warning/escalation ladder and advanced flood detection
+### Server protection and logs
+- [x] Member join/leave logs
+- [x] Welcome/goodbye channel and auto-role configuration
+- [x] Message edit/delete logs when Discord provides cached content
+- [x] Audit-log alerts for channel/role deletion, bans, kicks, role/channel changes and webhook changes
+- [x] Owner alert after repeated destructive audit actions (alert only; no automatic punishment)
+- [ ] Reliable anti-raid join velocity detection and configurable lockdown
+- [ ] Automatic safe response policies and trusted-admin allowlists
+- [ ] Bot-add / permission escalation detection with actor confidence scoring
+### Utilities
+- [x] /ping, /help, /userinfo, /serverinfo, /avatar, /stats
+- [x] /automod configuration
+- [x] /welcome configuration
+- [x] /backup create and /backup list
+- [x] /restore preview and owner/admin-confirmed best-effort restore
 
 ## Premium edition
+- [ ] Advanced anti-raid and configurable thresholds
+- [ ] Anti-nuke automatic containment policies
+- [ ] Scheduled automatic backups and retention controls
+- [ ] Full role/channel permission overwrite restoration and position reconciliation
+- [ ] Recovery of additional supported server settings
+- [ ] Custom automod rules, warning thresholds, temp bans and scheduled moderation
+- [ ] Staff activity reports, moderation statistics and exportable reports
+- [ ] Custom embeds, welcome templates and images
+- [ ] Premium feature gating and self-service entitlements
 
-### Advanced security and anti-nuke
-- [ ] Configurable anti-raid thresholds
-- [ ] Mass-channel deletion detection
-- [ ] Mass-role deletion detection
-- [ ] Mass-ban and mass-kick detection
-- [ ] Dangerous permission-change alerts
-- [ ] Webhook deletion and creation monitoring where supported
-- [ ] Suspicious bot-add and privilege escalation alerts
-- [ ] Configurable response policies and trusted-admin safeguards
-
-### Server backup and recovery
-- [ ] Scheduled snapshots of supported server structure and configuration
-- [ ] Incident-time snapshot and evidence preservation
-- [ ] Recreate supported channels, categories, and roles
-- [ ] Restore supported permission overwrites and role settings
-- [ ] Recovery preview and owner confirmation option
-- [ ] Recovery activity report and audit trail
-
-Recovery is best-effort. Discord does not provide a universal undo function. Deleted messages cannot be restored by the bot, and some resources or settings may not be recoverable. See SECURITY.md.
-
-### Advanced moderation
-- [ ] Custom automod rules
-- [ ] Advanced punishment automation
-- [ ] Custom warning thresholds
-- [ ] Temporary bans
-- [ ] Scheduled moderation actions
-- [ ] Advanced moderation reports
-
-### Advanced logging and customization
-- [ ] Detailed audit-log views
-- [ ] Custom log categories
-- [ ] Staff activity reports
-- [ ] Moderation statistics and exportable reports
-- [ ] Custom embeds and bot responses
-- [ ] Custom welcome images and templates
-
-## Owner / operator tools
-- [ ] Owner-only control panel
-- [ ] Manually grant and revoke premium
-- [ ] View premium servers and subscription status
-- [ ] Bot and guild statistics
-- [ ] Global announcements
-- [ ] Maintenance mode
-- [ ] System health monitoring
+## Owner / operator
+- [x] Manual per-server premium grant/revoke command (host must set BOT_OWNER_ID and BOT_OWNER_KEY)
+- [x] Per-server premium status
+- [ ] Web-based owner dashboard, guild directory, global announcements and maintenance controls
+- [ ] Health monitoring, error reporting and audit dashboard
 
 ## Website and billing
-- [ ] Product landing page and Add to Discord flow
-- [ ] Discord OAuth login
-- [ ] Server dashboard
-- [ ] Premium plans and subscription management
-- [ ] Server-side payment verification
-- [ ] Automatic premium activation and expiration
-- [ ] Renewal and payment history
-- [ ] Documentation, support, and service status pages
+- [ ] Landing page and Add to Discord flow
+- [ ] Discord OAuth and server dashboard
+- [ ] Monthly/yearly subscription plans
+- [ ] Payment provider integration with server-side webhook verification
+- [ ] Automatic activation, expiration, renewals and payment history
+- [ ] Documentation, support and public status pages
 
-Payment status must never be trusted from a browser redirect or client-side value. Verify payments server-side with the selected provider before changing entitlements.
+## Recovery limitations
+Backups cover a best-effort subset of server structure. Restore currently recreates missing roles/categories/channels; it does not restore deleted messages, guarantee permission overwrite recovery, restore integrations/webhooks, or reverse every Discord setting. Preview before applying and keep backups outside the bot host too.
