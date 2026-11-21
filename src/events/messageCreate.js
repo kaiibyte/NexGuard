@@ -2,19 +2,7 @@ const { PermissionFlagsBits } = require("discord.js");
 const config = require("../config");
 const { log } = require("../utils/logger");
 const settings = require("../services/guild-settings");
-
-const recent = new Map();
-
-// Remove stale anti-spam entries so this map cannot grow forever.
-const cleanupTimer = setInterval(() => {
-  const cutoff = Date.now() - config.spam.windowMs;
-  for (const [key, timestamps] of recent) {
-    const fresh = timestamps.filter(timestamp => timestamp > cutoff);
-    if (fresh.length) recent.set(key, fresh);
-    else recent.delete(key);
-  }
-}, 10 * 60 * 1000);
-cleanupTimer.unref?.();
+const spamStore = require("../services/anti-spam-store");
 
 module.exports = {
   name: "messageCreate",
@@ -63,17 +51,16 @@ module.exports = {
       return;
     }
 
-    const key = message.guild.id + ":" + message.author.id;
-    const now = Date.now();
-    const times = (recent.get(key) || []).filter(timestamp => now - timestamp < config.spam.windowMs);
-    times.push(now);
+    const spam = await spamStore.recordMessage(
+      message.guild.id,
+      message.author.id,
+      message.id,
+      config.spam.windowMs,
+      config.spam.maxMessages
+    );
 
-    if (times.length < config.spam.maxMessages) {
-      recent.set(key, times);
-      return;
-    }
+    if (spam.count < config.spam.maxMessages) return;
 
-    recent.delete(key);
     await message.member.timeout(
       config.spam.timeoutMinutes * 60000,
       "NexGuard anti-spam threshold exceeded"
