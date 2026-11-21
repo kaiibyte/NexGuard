@@ -21,7 +21,7 @@
 - [x] Message edit/delete logs when Discord provides cached content
 - [x] Audit-log alerts for channel/role deletion, bans, kicks, role/channel changes and webhook changes
 - [x] Owner alert after repeated destructive audit actions (alert only; no automatic punishment)
-- [ ] Reliable anti-raid join velocity detection and configurable lockdown
+- [x] Basic join-spike alert and new-account-age risk signal (in-memory, alert-only)\n- [ ] Configurable anti-raid thresholds and automatic lockdown
 - [ ] Automatic safe response policies and trusted-admin allowlists
 - [ ] Bot-add / permission escalation detection with actor confidence scoring
 ### Utilities
