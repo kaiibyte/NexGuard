@@ -19,7 +19,7 @@ npm install
 7. Put NexGuard's bot role above any roles it must assign or moderate.
 
 ## Environment
-Copy `.env.example` to `.env` and fill in `DISCORD_TOKEN` and `CLIENT_ID`. Optionally set `GUILD_ID` for fast test-server command updates, `LOG_CHANNEL_ID` for moderation/security logs, and `BOT_OWNER_ID` for owner-only premium grants. Never commit `.env`.
+Copy `.env.example` to `.env` and fill in `DISCORD_TOKEN` and `CLIENT_ID`. Optionally set `GUILD_ID` for fast test-server command updates, `LOG_CHANNEL_ID` for moderation/security logs, and `BOT_OWNER_ID` for the private owner control center. Set it to your Discord user ID. Never commit `.env`.
 
 ## Run
 ```bash
