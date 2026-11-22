@@ -33,7 +33,8 @@ async function restore(guild, snapshot, dryRun = true) {
     actions.push("Create channel: " + channel.name);
     if (!dryRun) {
       const options = { name:channel.name, type:channel.type, topic:channel.topic || undefined, nsfw:channel.nsfw, rateLimitPerUser:channel.rateLimitPerUser, parent:categoryMap.get(channel.parentName) || undefined, reason:"NexGuard backup recovery" };
-      const created = await guild.channels.create(options);\n      if (channel.permissionOverwrites?.length) { const overwrites=channel.permissionOverwrites.map(o=>({id:roleMap.get(o.id)||o.id,allow:BigInt(o.allow),deny:BigInt(o.deny)})); await created.permissionOverwrites.set(overwrites,"NexGuard backup recovery").catch(()=>null); }
+      const created = await guild.channels.create(options);
+      if (channel.permissionOverwrites?.length) { const overwrites=channel.permissionOverwrites.map(o=>({id:roleMap.get(o.id)||o.id,allow:BigInt(o.allow),deny:BigInt(o.deny)})); await created.permissionOverwrites.set(overwrites,"NexGuard backup recovery").catch(()=>null); }
     }
   }
   return actions;
