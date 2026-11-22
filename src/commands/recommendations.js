@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, PermissionFlagsBits, EmbedBuilder } = require("discord.js");
+const { SlashCommandBuilder, PermissionFlagsBits, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require("discord.js");
 const settings = require("../services/guild-settings");
 const config = require("../config");
 
@@ -31,15 +31,26 @@ module.exports = {
 
     const score = checks.reduce((total, check) => total + (check.ok ? check.points : 0), 0);
     const recommendations = checks.filter(check => !check.ok).map(check =>
-      `• **${check.title}** ( +${check.points} points )\n  ${check.why}`
+      `• **${check.title}** (+${check.points} points)\n  ${check.why}`
     );
     if (risky.length) recommendations.push(`• **Dangerous @everyone permissions**\n  Currently granted: ${risky.map(([name]) => name).join(", ")}. Review these in Server Settings → Roles.`);
+
     const embed = new EmbedBuilder()
       .setColor(score >= 80 ? 0x16a34a : score >= 50 ? 0xf59e0b : 0xdc2626)
-      .setTitle("NexGuard Security Advisor")
-      .setDescription(`**Server security score: ${score}/100**\n\n${recommendations.length ? recommendations.join("\n\n") : "Great work! No issues were found in the checks NexGuard can currently inspect."}`)
-      .setFooter({ text: "Recommendations are advisory. NexGuard does not change server settings automatically." })
+      .setTitle("🛡️ NexGuard Security Recommendations")
+      .setDescription(`**Security score: ${score}/100**\n\n${recommendations.length ? recommendations.join("\n\n") : "✨ Great work! No issues were found in the checks NexGuard can currently inspect."}`)
+      .addFields({ name: "Automatic setup", value: "Use the button below to enable NexGuard's safe built-in protections. Server permissions and channel settings are never changed automatically." })
+      .setFooter({ text: "NexGuard Security Advisor • Review every change" })
       .setTimestamp();
-    return interaction.reply({ embeds: [embed], ephemeral: true });
+
+    const row = new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
+        .setCustomId("nexguard:recommendations:apply:" + guild.id)
+        .setLabel("Apply safe recommendations")
+        .setEmoji("🛡️")
+        .setStyle(ButtonStyle.Success)
+        .setDisabled(cfg.antiNukeEnabled && cfg.antiRaid)
+    );
+    return interaction.reply({ embeds: [embed], components: [row], ephemeral: true });
   }
 };
