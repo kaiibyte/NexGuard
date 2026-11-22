@@ -16,8 +16,10 @@ module.exports = {
     const target = await interaction.guild.members.fetch(user.id).catch(() => null);
     if (!target || !canModerate(interaction, target)) return interaction.reply({ content: "I can't timeout that member. Check role hierarchy and target.", ephemeral: true });
     if (!hasBotPermission(interaction, PermissionFlagsBits.ModerateMembers)) return interaction.reply({ content: "I need the **Moderate Members** permission.", ephemeral: true });
-    const dmSent = await user.send({ embeds: [{ color: 0xd97706, title: "You were timed out", description: `You were timed out in **${interaction.guild.name}** for **${minutes} minute(s)**.\\n\\n**Reason:** ${reason}` }] }).then(() => true).catch(() => false);\n    await target.timeout(minutes * 60 * 1000, `${reason} | Moderator: ${interaction.user.tag}`);\n    const caseId = database.createCase(interaction.guildId, user.id, interaction.user.id, "Timeout", reason, `${minutes} minutes`);
-    await interaction.reply({ content: `⏳ Timed out **${user.tag}** for ${minutes} minute(s). Reason: ${reason}\\nCase #${caseId} • DM: ${dmSent ? "sent" : "not delivered"}`, ephemeral: true });
+    const dmSent = await user.send({ embeds: [{ color: 0xd97706, title: "You were timed out", description: `You were timed out in **${interaction.guild.name}** for **${minutes} minute(s)**.\n\n**Reason:** ${reason}` }] }).then(() => true).catch(() => false);
+    await target.timeout(minutes * 60 * 1000, `${reason} | Moderator: ${interaction.user.tag}`);
+    const caseId = database.createCase(interaction.guildId, user.id, interaction.user.id, "Timeout", reason, `${minutes} minutes`);
+    await interaction.reply({ content: `⏳ Timed out **${user.tag}** for ${minutes} minute(s). Reason: ${reason}\nCase #${caseId} • DM: ${dmSent ? "sent" : "not delivered"}`, ephemeral: true });
     await log(interaction.guild, "Member timed out", `**User:** ${user.tag} (${user.id})\n**Moderator:** ${interaction.user.tag}\n**Duration:** ${minutes} minutes\n**Reason:** ${reason}`, 0xd97706);
   }
 };
