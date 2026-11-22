@@ -17,6 +17,6 @@ module.exports={
   const embed=new EmbedBuilder().setColor(0x7c3aed).setTitle("🛡️ Verify to access the server").setDescription("Welcome! Press the button below to verify and receive access. If you need help, contact a moderator.");
   const row=new ActionRowBuilder().addComponents(new ButtonBuilder().setCustomId("nexguard:verify:"+i.guildId).setLabel("Verify").setStyle(ButtonStyle.Success).setEmoji("✅"));
   await channel.send({embeds:[embed],components:[row]});
-  return i.reply({content:"Verification is enabled. New members will receive the unverified role, and this channel now has a verification panel. Make sure your other channels deny View Channel to that role.",ephemeral:true});
+  return i.editReply("Verification is enabled. New members will receive the unverified role. NexGuard applied access restrictions in "+protectedChannels+" channels; "+failedChannels+" channel permission updates failed. Check the permissions manually.");
  }
 };
