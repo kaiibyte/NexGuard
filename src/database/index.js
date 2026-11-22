@@ -25,7 +25,10 @@ const getBackupStmt=db.prepare("SELECT id,snapshot_json,created_at FROM backups 
 const getOwnerSettingStmt=db.prepare("SELECT value FROM owner_settings WHERE key=?");
 const insertNsfwStrike=db.prepare("INSERT OR IGNORE INTO nsfw_strikes(guild_id,user_id,message_id) VALUES(?,?,?)");
 const countNsfwStrikes=db.prepare("SELECT COUNT(*) AS count FROM nsfw_strikes WHERE guild_id=? AND user_id=?");
+const insertIncident=db.prepare("INSERT INTO incidents(guild_id,actor_id,action,details) VALUES(?,?,?,?)");
+const listIncidentsStmt=db.prepare("SELECT id,actor_id,action,details,created_at FROM incidents WHERE guild_id=? ORDER BY id DESC LIMIT ?");
 module.exports={
+ addIncident(guildId,actorId,action,details){return insertIncident.run(guildId,actorId,action,details).lastInsertRowid;},listIncidents(guildId,limit=10){return listIncidentsStmt.all(guildId,Math.max(1,Math.min(25,limit)));},
  addWarning(g,u,m,r){return insertWarning.run(g,u,m,r).lastInsertRowid;},getWarnings(g,u){return getWarnings.all(g,u);},clearWarnings(g,u){return clearWarnings.run(g,u).changes;},
  getGuildSettings(g){const row=getSettings.get(g);if(!row)return null;try{return JSON.parse(row.settings_json);}catch{return null;}},
  setGuildSettings(g,s){putSettings.run(g,JSON.stringify(s));},
