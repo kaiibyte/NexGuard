@@ -26,6 +26,7 @@ module.exports = {
    return i.reply({ content: "I need View Channel, Send Messages, and Embed Links in the verification channel.", ephemeral: true });
   }
   await i.deferReply({ ephemeral: true });
+  await i.guild.channels.fetch();
   let protectedChannels = 0;
   let failedChannels = 0;
   for (const target of i.guild.channels.cache.values()) {
