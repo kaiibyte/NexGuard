@@ -29,7 +29,16 @@ async function restore(guild, snapshot, dryRun = true) {
   }
   for (const channel of snapshot.channels || []) {
     const exists = guild.channels.cache.find(c => c.name === channel.name && c.type === channel.type);
-    if (exists) continue;
+    if (exists) {
+      if (channel.permissionOverwrites?.length) {
+        actions.push("Restore channel permissions: " + channel.name);
+        if (!dryRun) {
+          const overwrites = channel.permissionOverwrites.map(o => ({ id: roleMap.get(o.id) || o.id, allow: BigInt(o.allow), deny: BigInt(o.deny) }));
+          await exists.permissionOverwrites.set(overwrites, "NexGuard backup recovery").catch(() => null);
+        }
+      }
+      continue;
+    }
     actions.push("Create channel: " + channel.name);
     if (!dryRun) {
       const options = { name:channel.name, type:channel.type, topic:channel.topic || undefined, nsfw:channel.nsfw, rateLimitPerUser:channel.rateLimitPerUser, parent:categoryMap.get(channel.parentName) || undefined, reason:"NexGuard backup recovery" };
