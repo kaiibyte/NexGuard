@@ -4,7 +4,7 @@ const settings = require("./guild-settings");
 const db = require("../database");
 const activity = new Map();
 const handled = new Map();
-const WINDOW_MS = 15000;
+const WINDOW_MS = 60000;
 const INCIDENT_COOLDOWN_MS = 60000;
 const DESTRUCTIVE = new Map([
  [AuditLogEvent.ChannelDelete, "Channel deleted"],
