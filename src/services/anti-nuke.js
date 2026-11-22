@@ -100,7 +100,7 @@ async function record(entry, guild) {
     guild,
     "🚨 NexGuard Anti-Nuke Incident",
     [
-      `**Responsible administrator:** <@! ${actorId}>`,
+      `**Responsible administrator:** <@${actorId}>`,
       `**Actions detected:** ${recent.length} in ${Math.round((cfg.antiNukeWindowMs || WINDOW_MS) / 1000)} seconds (threshold: ${threshold})`,
       "",
       "**Detected actions**",
