@@ -21,7 +21,7 @@ module.exports = {
       .setColor(0x7c3aed)
       .setTitle("NexGuard — Recent Incidents")
       .setDescription(rows.map(row =>
-        `**#${row.id} · ${row.action}**\nActor: ${row.actor_id ? `<@!${row.actor_id}>` : "Unknown"}\n${String(row.details || "").slice(0, 500)}\n< t:${Math.floor(Date.parse(row.created_at + "Z") / 1000)}:R>`
+        `**#${row.id} · ${row.action}**\nActor: ${row.actor_id ? `<@!${row.actor_id}>` : "Unknown"}\n${String(row.details || "").slice(0, 500)}\n<t:${Math.floor(Date.parse(row.created_at + "Z") / 1000)}:R>`
       ).join("\n\n").slice(0, 4000))
       .setFooter({ text: "Showing the latest recorded incidents" })
       .setTimestamp();
