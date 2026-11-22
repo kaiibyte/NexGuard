@@ -3,6 +3,7 @@ const config = require("../config");
 const { log } = require("../utils/logger");
 const settings = require("../services/guild-settings");
 const spamStore = require("../services/anti-spam-store");
+const { moderateMessage } = require("../services/nsfw-moderation");
 
 module.exports = {
   name: "messageCreate",
@@ -15,6 +16,11 @@ module.exports = {
       message.member.permissions.has(PermissionFlagsBits.Administrator) ||
       message.member.roles.cache.some(role => cfg.trustedRoleIds.includes(role.id))
     ) return;
+
+    // NSFW image checks run before text automod. Service failures never punish users.
+    await moderateMessage(message).catch(error => {
+      console.error("NSFW moderation handler failed:", error.message);
+    });
 
     let reason = null;
     const content = message.content.toLowerCase();
@@ -43,9 +49,7 @@ module.exports = {
 
     if (reason) {
       await message.delete().catch(() => null);
-      const reply = await message.channel.send({
-        content: message.author + ", " + reason.toLowerCase() + "."
-      }).catch(() => null);
+      const reply = await message.channel.send({ content: message.author + ", " + reason.toLowerCase() + "." }).catch(() => null);
       if (reply) setTimeout(() => reply.delete().catch(() => null), 5000);
       await log(message.guild, "Automod action", message.author.tag + ": " + reason, 0xdc2626);
       return;
@@ -61,16 +65,8 @@ module.exports = {
 
     if (spam.count < config.spam.maxMessages) return;
 
-    await message.member.timeout(
-      config.spam.timeoutMinutes * 60000,
-      "NexGuard anti-spam threshold exceeded"
-    )
-      .then(() => log(
-        message.guild,
-        "Anti-spam timeout",
-        message.author.tag + " timed out for " + config.spam.timeoutMinutes + " minutes.",
-        0xdc2626
-      ))
+    await message.member.timeout(config.spam.timeoutMinutes * 60000, "NexGuard anti-spam threshold exceeded")
+      .then(() => log(message.guild, "Anti-spam timeout", message.author.tag + " timed out for " + config.spam.timeoutMinutes + " minutes.", 0xdc2626))
       .catch(error => console.error("Anti-spam action failed:", error.message));
   }
 };
