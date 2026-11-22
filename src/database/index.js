@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS guild_settings(guild_id TEXT PRIMARY KEY,settings_jso
 CREATE TABLE IF NOT EXISTS backups(id INTEGER PRIMARY KEY AUTOINCREMENT,guild_id TEXT NOT NULL,snapshot_json TEXT NOT NULL,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP);
 CREATE INDEX IF NOT EXISTS backups_lookup ON backups(guild_id,id DESC);
 CREATE TABLE IF NOT EXISTS premium(guild_id TEXT PRIMARY KEY,granted_by TEXT NOT NULL,expires_at TEXT,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP);
-CREATE TABLE IF NOT EXISTS incidents(id INTEGER PRIMARY KEY AUTOINCREMENT,guild_id TEXT NOT NULL,actor_id TEXT,action TEXT NOT NULL,details TEXT,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP);
+CREATE TABLE IF NOT EXISTS incidents(id INTEGER PRIMARY KEY AUTOINCREMENT,guild_id TEXT NOT NULL,actor_id TEXT,action TEXT NOT NULL,details TEXT,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP);\nCREATE TABLE IF NOT EXISTS moderation_cases(id INTEGER PRIMARY KEY AUTOINCREMENT,guild_id TEXT NOT NULL,user_id TEXT NOT NULL,moderator_id TEXT NOT NULL,action TEXT NOT NULL,reason TEXT NOT NULL,duration TEXT,note TEXT,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP);\nCREATE INDEX IF NOT EXISTS cases_lookup ON moderation_cases(guild_id,user_id,id DESC);
 CREATE TABLE IF NOT EXISTS owner_settings(key TEXT PRIMARY KEY,value TEXT NOT NULL,updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP);
 CREATE TABLE IF NOT EXISTS owner_blacklist(kind TEXT NOT NULL,target_id TEXT NOT NULL,reason TEXT NOT NULL,created_by TEXT NOT NULL,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,PRIMARY KEY(kind,target_id));
 CREATE TABLE IF NOT EXISTS owner_audit(id INTEGER PRIMARY KEY AUTOINCREMENT,owner_id TEXT NOT NULL,action TEXT NOT NULL,target_id TEXT,details TEXT,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP);
@@ -26,9 +26,9 @@ const getOwnerSettingStmt=db.prepare("SELECT value FROM owner_settings WHERE key
 const insertNsfwStrike=db.prepare("INSERT OR IGNORE INTO nsfw_strikes(guild_id,user_id,message_id) VALUES(?,?,?)");
 const countNsfwStrikes=db.prepare("SELECT COUNT(*) AS count FROM nsfw_strikes WHERE guild_id=? AND user_id=?");
 const insertIncident=db.prepare("INSERT INTO incidents(guild_id,actor_id,action,details) VALUES(?,?,?,?)");
-const listIncidentsStmt=db.prepare("SELECT id,actor_id,action,details,created_at FROM incidents WHERE guild_id=? ORDER BY id DESC LIMIT ?");
+const listIncidentsStmt=db.prepare("SELECT id,actor_id,action,details,created_at FROM incidents WHERE guild_id=? ORDER BY id DESC LIMIT ?");\nconst insertCase=db.prepare("INSERT INTO moderation_cases(guild_id,user_id,moderator_id,action,reason,duration) VALUES(?,?,?,?,?,?)");\nconst getCaseStmt=db.prepare("SELECT * FROM moderation_cases WHERE guild_id=? AND id=?");\nconst listCasesStmt=db.prepare("SELECT * FROM moderation_cases WHERE guild_id=? AND user_id=? ORDER BY id DESC LIMIT 10");\nconst addCaseNoteStmt=db.prepare("UPDATE moderation_cases SET note=? WHERE guild_id=? AND id=?");
 module.exports={
- addIncident(guildId,actorId,action,details){return insertIncident.run(guildId,actorId,action,details).lastInsertRowid;},listIncidents(guildId,limit=10){return listIncidentsStmt.all(guildId,Math.max(1,Math.min(25,limit)));},
+ addIncident(guildId,actorId,action,details){return insertIncident.run(guildId,actorId,action,details).lastInsertRowid;},\n createCase(g,u,m,a,r,duration=null){return insertCase.run(g,u,m,a,r,duration).lastInsertRowid;},getCase(g,id){return getCaseStmt.get(g,id)||null;},listCases(g,u){return listCasesStmt.all(g,u);},addCaseNote(g,id,note){return addCaseNoteStmt.run(note,g,id).changes;},listIncidents(guildId,limit=10){return listIncidentsStmt.all(guildId,Math.max(1,Math.min(25,limit)));},
  addWarning(g,u,m,r){return insertWarning.run(g,u,m,r).lastInsertRowid;},getWarnings(g,u){return getWarnings.all(g,u);},clearWarnings(g,u){return clearWarnings.run(g,u).changes;},
  getGuildSettings(g){const row=getSettings.get(g);if(!row)return null;try{return JSON.parse(row.settings_json);}catch{return null;}},
  setGuildSettings(g,s){putSettings.run(g,JSON.stringify(s));},
