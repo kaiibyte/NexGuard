@@ -20,16 +20,45 @@ const DESTRUCTIVE = new Map([
  [AuditLogEvent.BotAdd, "Bot added to server"]
 ]);
 async function record(entry, guild) {
+ if (!guild || !entry) {
+  console.warn("[Anti-Nuke] Missing guild or audit-log entry.");
+  return;
+ }
  const cfg = settings.get(guild.id);
- if (!cfg.antiNukeEnabled || !DESTRUCTIVE.has(entry.action)) return;
+ if (!cfg.antiNukeEnabled) {
+  console.log("[Anti-Nuke] Ignored: protection is disabled for guild", guild.id);
+  return;
+ }
+ if (!DESTRUCTIVE.has(entry.action)) {
+  console.log("[Anti-Nuke] Ignored unsupported audit action:", entry.action);
+  return;
+ }
  const actorId = entry.executorId || entry.executor?.id;
- if (!actorId || actorId === guild.ownerId || (cfg.trustedAdminIds || []).includes(actorId)) return;
+ if (!actorId) {
+  console.warn("[Anti-Nuke] Audit event has no executor ID; cannot attribute action.", entry.id);
+  return;
+ }
+ if (actorId === guild.ownerId) {
+  console.log("[Anti-Nuke] Ignored server owner:", actorId);
+  return;
+ }
+ if ((cfg.trustedAdminIds || []).includes(actorId)) {
+  console.log("[Anti-Nuke] Ignored trusted admin:", actorId);
+  return;
+ }
  const now = Date.now(), key = guild.id + ":" + actorId;
  const recent = (activity.get(key) || []).filter(item => now - item.time <= (cfg.antiNukeWindowMs || WINDOW_MS));
- if (recent.some(item => item.id === entry.id)) return;
+ if (recent.some(item => item.id === entry.id)) {
+  console.log("[Anti-Nuke] Ignored duplicate audit entry:", entry.id);
+  return;
+ }
  recent.push({ id: entry.id, time: now, action: DESTRUCTIVE.get(entry.action), targetId: entry.targetId || null });
  activity.set(key, recent);
  const threshold = cfg.antiNukeThreshold || 4;
+ console.log("[Anti-Nuke] Tracked action:", {
+  guildId: guild.id, actorId, action: DESTRUCTIVE.get(entry.action),
+  count: recent.length, threshold, windowMs: cfg.antiNukeWindowMs || WINDOW_MS
+ });
  if (recent.length < threshold || (handled.has(key) && now - handled.get(key) < INCIDENT_COOLDOWN_MS)) return;
  handled.set(key, now);
  activity.delete(key);
