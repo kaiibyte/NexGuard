@@ -48,7 +48,7 @@ module.exports = {
   for (const channel of channels.values()) {
    if (![ChannelType.GuildText, ChannelType.GuildAnnouncement, ChannelType.GuildForum].includes(channel.type)) continue;
    try {
-    await channel.permissionOverwrites.edit(i.guild.roles.everyone, { SendMessages: null }, { reason: "Owner requested NexGuard lockdown release" });
+    await channel.permissionOverwrites.edit(i.guild.roles.everyone, { SendMessages: null, SendMessagesInThreads: null, CreatePublicThreads: null, CreatePrivateThreads: null }, { reason: "Owner requested NexGuard lockdown release" });
     changed++;
    } catch { failed++; }
   }
