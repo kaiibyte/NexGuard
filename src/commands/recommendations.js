@@ -1,5 +1,6 @@
 const { SlashCommandBuilder, PermissionFlagsBits, EmbedBuilder } = require("discord.js");
 const settings = require("../services/guild-settings");
+const config = require("../config");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -22,7 +23,7 @@ module.exports = {
       { ok: cfg.antiNukeEnabled, points: 25, title: "Enable anti-nuke protection", why: "Detects repeated destructive actions by an untrusted administrator." },
       { ok: cfg.autoLockdown, points: 15, title: "Enable automatic lockdown", why: "Lets NexGuard attempt emergency containment after an anti-nuke threshold is reached." },
       { ok: cfg.antiRaid, points: 15, title: "Keep anti-raid protection enabled", why: "Helps protect the server during suspicious join waves." },
-      { ok: Boolean(cfg.logChannelId), points: 10, title: "Set a security log channel", why: "Gives moderators one place to review NexGuard security alerts." },
+      { ok: Boolean(cfg.logChannelId || config.logChannelId), points: 10, title: "Set a security log channel", why: "Gives moderators one place to review NexGuard security alerts." },
       { ok: risky.length === 0, points: 20, title: "Review @everyone permissions", why: "Remove powerful server-management permissions from @everyone." },
       { ok: Boolean(guild.members.me?.permissions.has(PermissionFlagsBits.ViewAuditLog)), points: 10, title: "Grant View Audit Log to NexGuard", why: "Required to attribute many security actions to the responsible account." },
       { ok: Boolean(guild.members.me?.permissions.has(PermissionFlagsBits.ManageRoles)), points: 5, title: "Grant Manage Roles to NexGuard", why: "Needed for role and permission-based containment tasks." }
