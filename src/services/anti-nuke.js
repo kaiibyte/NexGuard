@@ -96,6 +96,14 @@ async function record(entry, guild) {
     `${index + 1}. ${item.action}${item.targetId ? ` (target: ${item.targetId})` : ""}`
   ).join("\n");
 
+  const incidentDetails = [
+      `Actor: ${actorId}`,
+      `Actions: ${recent.map(item => item.action).join(", ")}`,
+      `Automatic ban: ${banStatus}`,
+      `Emergency lockdown: ${lockStatus}`
+    ].join("\\n");
+  require("../database").addIncident(guild.id, actorId, "Anti-nuke", incidentDetails);
+
   await log(
     guild,
     "🚨 NexGuard Anti-Nuke Incident",
