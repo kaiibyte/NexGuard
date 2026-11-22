@@ -31,19 +31,29 @@ async function record(entry, guild) {
  activity.set(key, recent);
  const threshold = cfg.antiNukeThreshold || 4;
  if (recent.length < threshold || (handled.has(key) && now - handled.get(key) < INCIDENT_COOLDOWN_MS)) return;
- handled.set(key, now); activity.delete(key);
+ handled.set(key, now);
+ activity.delete(key);
  const member = await guild.members.fetch(actorId).catch(() => null);
  const botMember = guild.members.me || await guild.members.fetchMe().catch(() => null);
- const isAdmin = Boolean(member && (member.permissions.has(PermissionFlagsBits.Administrator) || member.permissions.has(PermissionFlagsBits.ManageGuild) || member.permissions.has(PermissionFlagsBits.ManageChannels) || member.permissions.has(PermissionFlagsBits.ManageRoles)));
+ const isAdmin = Boolean(member && (
+  member.permissions.has(PermissionFlagsBits.Administrator) ||
+  member.permissions.has(PermissionFlagsBits.ManageGuild) ||
+  member.permissions.has(PermissionFlagsBits.ManageChannels) ||
+  member.permissions.has(PermissionFlagsBits.ManageRoles)
+ ));
  const banReason = "NexGuard anti-nuke: " + recent.length + " suspicious security actions within " + Math.round((cfg.antiNukeWindowMs || WINDOW_MS) / 1000) + " seconds.";
  let banStatus = "Not attempted — actor is not a current administrator or could not be fetched.";
  if (isAdmin) {
   if (!botMember?.permissions.has(PermissionFlagsBits.BanMembers)) banStatus = "Failed — NexGuard needs the Ban Members permission.";
   else if (!member.bannable) banStatus = "Failed — actor is above/equal to NexGuard's highest role.";
   else {
-   const dmSent = await member.user.send({ embeds: [{ color: 0xdc2626, title: "You have been banned", description: "You were banned from **" + guild.name + "** by NexGuard automated security protection.\n\n**Reason:** " + banReason + "\n**Actions detected:** " + recent.map(x => x.action).join(", ") + "\n\nIf you believe this was a mistake, contact the server owner." }] }).then(() => true).catch(() => false);
    try {
     await guild.members.ban(actorId, { reason: banReason });
+    const dmSent = await member.user.send({ embeds: [{
+     color: 0xdc2626,
+     title: "You have been banned",
+     description: "You were banned from **" + guild.name + "** by NexGuard automated security protection.\n\n**Reason:** " + banReason + "\n**Actions detected:** " + recent.map(x => x.action).join(", ") + "\n\nIf you believe this was a mistake, contact the server owner."
+    }] }).then(() => true).catch(() => false);
     banStatus = "Successfully banned the responsible administrator. DM " + (dmSent ? "sent." : "could not be delivered.");
     db.createCase(guild.id, actorId, guild.client.user.id, "Anti-nuke ban", banReason);
    } catch (error) { banStatus = "Failed — " + error.message; }
@@ -55,8 +65,7 @@ async function record(entry, guild) {
   const channels = await guild.channels.fetch().catch(() => guild.channels.cache);
   for (const channel of channels.values()) {
    if (![ChannelType.GuildText, ChannelType.GuildAnnouncement, ChannelType.GuildForum].includes(channel.type)) continue;
-   const permissions = channel.permissionsFor(botMember);
-   if (!permissions?.has(PermissionFlagsBits.ManageRoles)) { lockFailed++; continue; }
+   if (!channel.permissionsFor(botMember)?.has(PermissionFlagsBits.ManageRoles)) { lockFailed++; continue; }
    try {
     await channel.permissionOverwrites.edit(guild.roles.everyone, { SendMessages: false }, { reason: "NexGuard anti-nuke emergency lockdown" });
     locked++;
