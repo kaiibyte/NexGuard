@@ -20,7 +20,7 @@ module.exports = {
   const cfg = settings.get(i.guildId);
   if (sub === "status") return i.reply({ content:
    "Anti-nuke: **" + (cfg.antiNukeEnabled ? "On" : "Off") + "**\nThreshold: **" + cfg.antiNukeThreshold +
-   " actions**\nAuto-lockdown: **" + (cfg.autoLockdown ? "On" : "Off") + "**\nTrusted admins: **" +
+   " actions**\nDetection window: **" + Math.round((cfg.antiNukeWindowMs || 60000) / 1000) + " seconds**\nAuto-lockdown: **" + (cfg.autoLockdown ? "On" : "Off") + "**\nTrusted admins: **" +
    (cfg.trustedAdminIds || []).length + "**", ephemeral: true });
   if (sub === "antinuke") {
    settings.set(i.guildId, { antiNukeEnabled: i.options.getBoolean("enabled", true) });
