@@ -13,7 +13,8 @@ const DESTRUCTIVE = new Map([
   [AuditLogEvent.MemberBanAdd, "Member banned"],
   [AuditLogEvent.MemberKick, "Member kicked"],
   [AuditLogEvent.WebhookDelete, "Webhook deleted"],
-  [AuditLogEvent.ChannelOverwriteDelete, "Channel permission overwrite deleted"],\n  [AuditLogEvent.RoleUpdate, "Role permissions or settings changed"],\n  [AuditLogEvent.ChannelUpdate, "Channel settings or permissions changed"],\n  [AuditLogEvent.MemberRoleUpdate, "Member roles changed"],\n  [AuditLogEvent.WebhookCreate, "Webhook created"],\n  [AuditLogEvent.BotAdd, "Bot added to server"]
+  [AuditLogEvent.ChannelOverwriteDelete, "Channel permission overwrite deleted"],
+  [AuditLogEvent.RoleUpdate, "Role permissions or settings changed"],\n  [AuditLogEvent.ChannelUpdate, "Channel settings or permissions changed"],\n  [AuditLogEvent.MemberRoleUpdate, "Member roles changed"],\n  [AuditLogEvent.WebhookCreate, "Webhook created"],\n  [AuditLogEvent.BotAdd, "Bot added to server"]
 ]);
 
 async function record(entry, guild) {
