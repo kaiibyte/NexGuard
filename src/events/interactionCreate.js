@@ -1,9 +1,32 @@
 const db = require("../database");
 const { ownerId } = require("../config");
+const { PermissionFlagsBits, EmbedBuilder } = require("discord.js");
 const settings = require("../services/guild-settings");
 module.exports = {
  name: "interactionCreate",
  async execute(interaction) {
+  if (interaction.isButton() && interaction.customId.startsWith("nexguard:recommendations:apply:")) {
+   const guildId = interaction.customId.split(":")[3];
+   if (!interaction.guild || interaction.guild.id !== guildId) return interaction.reply({ content: "This recommendation button belongs to another server.", ephemeral: true });
+   if (!interaction.memberPermissions?.has(PermissionFlagsBits.ManageGuild)) return interaction.reply({ content: "⛔ You need **Manage Server** permission to apply security settings.", ephemeral: true });
+   const current = settings.get(guildId);
+   const threshold = Math.max(6, Number(current.antiNukeThreshold) || 4);
+   settings.set(guildId, { antiNukeEnabled: true, antiRaid: true, antiNukeThreshold: threshold });
+   const embed = new EmbedBuilder()
+    .setColor(0x16A34A)
+    .setTitle("🛡️ Safe recommendations applied")
+    .setDescription("NexGuard has updated the built-in protection settings for this server.")
+    .addFields(
+     { name: "Anti-nuke detection", value: "✅ Enabled", inline: true },
+     { name: "Anti-raid protection", value: "✅ Enabled", inline: true },
+     { name: "Anti-nuke threshold", value: threshold + " actions in the detection window", inline: true },
+     { name: "Automatic lockdown", value: current.autoLockdown ? "Already enabled" : "Left unchanged (off)", inline: true },
+     { name: "Manual actions still needed", value: "Review @everyone permissions, configure a security log channel, and ensure NexGuard has View Audit Log and Manage Roles. These are not changed automatically." }
+    )
+    .setFooter({ text: "NexGuard Security Advisor • Changes saved to this server" })
+    .setTimestamp();
+   return interaction.update({ embeds: [embed], components: [] });
+  }
   if (interaction.isButton() && interaction.customId.startsWith("nexguard:verify:")) {
    const guildId = interaction.customId.split(":")[2];
    if (!interaction.guild || interaction.guild.id !== guildId) return interaction.reply({ content: "This verification button belongs to another server.", ephemeral: true });
