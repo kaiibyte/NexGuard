@@ -13,8 +13,8 @@ module.exports = {
     const reason = interaction.options.getString("reason", true);
     const target = await interaction.guild.members.fetch(user.id).catch(() => null);
     if (!target || !canModerate(interaction, target)) return interaction.reply({ content: "I can't warn that member. Check role hierarchy and target.", ephemeral: true });
-    const id = database.addWarning(interaction.guildId, user.id, interaction.user.id, reason);
-    await interaction.reply({ content: `⚠️ Warned **${user.tag}**. Warning ID: #${id}. Reason: ${reason}`, ephemeral: true });
+    const id = database.addWarning(interaction.guildId, user.id, interaction.user.id, reason);\n    const caseId = database.createCase(interaction.guildId, user.id, interaction.user.id, "Warning", reason);
+    await interaction.reply({ content: `⚠️ Warned **${user.tag}**. Warning ID: #${id} • Case #${caseId}. Reason: ${reason}`, ephemeral: true });
     await log(interaction.guild, "Member warned", `**User:** ${user.tag} (${user.id})\n**Moderator:** ${interaction.user.tag}\n**Warning:** #${id}\n**Reason:** ${reason}`, 0xeab308);
   }
 };
