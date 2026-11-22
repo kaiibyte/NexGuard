@@ -11,6 +11,8 @@ CREATE TABLE IF NOT EXISTS incidents(id INTEGER PRIMARY KEY AUTOINCREMENT,guild_
 CREATE TABLE IF NOT EXISTS owner_settings(key TEXT PRIMARY KEY,value TEXT NOT NULL,updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP);
 CREATE TABLE IF NOT EXISTS owner_blacklist(kind TEXT NOT NULL,target_id TEXT NOT NULL,reason TEXT NOT NULL,created_by TEXT NOT NULL,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,PRIMARY KEY(kind,target_id));
 CREATE TABLE IF NOT EXISTS owner_audit(id INTEGER PRIMARY KEY AUTOINCREMENT,owner_id TEXT NOT NULL,action TEXT NOT NULL,target_id TEXT,details TEXT,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP);
+CREATE TABLE IF NOT EXISTS nsfw_strikes(id INTEGER PRIMARY KEY AUTOINCREMENT,guild_id TEXT NOT NULL,user_id TEXT NOT NULL,message_id TEXT NOT NULL UNIQUE,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP);
+CREATE INDEX IF NOT EXISTS nsfw_strikes_lookup ON nsfw_strikes(guild_id,user_id);
 `);
 const insertWarning=db.prepare("INSERT INTO warnings(guild_id,user_id,moderator_id,reason) VALUES(?,?,?,?)");
 const getWarnings=db.prepare("SELECT id,moderator_id,reason,created_at FROM warnings WHERE guild_id=? AND user_id=? ORDER BY id DESC");
@@ -21,11 +23,14 @@ const insertBackup=db.prepare("INSERT INTO backups(guild_id,snapshot_json) VALUE
 const listBackup=db.prepare("SELECT id,created_at FROM backups WHERE guild_id=? ORDER BY id DESC LIMIT 10");
 const getBackupStmt=db.prepare("SELECT id,snapshot_json,created_at FROM backups WHERE guild_id=? AND id=?");
 const getOwnerSettingStmt=db.prepare("SELECT value FROM owner_settings WHERE key=?");
+const insertNsfwStrike=db.prepare("INSERT OR IGNORE INTO nsfw_strikes(guild_id,user_id,message_id) VALUES(?,?,?)");
+const countNsfwStrikes=db.prepare("SELECT COUNT(*) AS count FROM nsfw_strikes WHERE guild_id=? AND user_id=?");
 module.exports={
  addWarning(g,u,m,r){return insertWarning.run(g,u,m,r).lastInsertRowid;},getWarnings(g,u){return getWarnings.all(g,u);},clearWarnings(g,u){return clearWarnings.run(g,u).changes;},
  getGuildSettings(g){const row=getSettings.get(g);if(!row)return null;try{return JSON.parse(row.settings_json);}catch{return null;}},
  setGuildSettings(g,s){putSettings.run(g,JSON.stringify(s));},
  saveBackup(g,s){return insertBackup.run(g,JSON.stringify(s)).lastInsertRowid;},listBackups(g){return listBackup.all(g);},getBackup(g,id){return getBackupStmt.get(g,id)||null;},
+ recordNsfwStrike(g,u,m){insertNsfwStrike.run(g,u,m);return countNsfwStrikes.get(g,u).count;},
  grantPremium(g,by,expiresAt=null){db.prepare("INSERT INTO premium(guild_id,granted_by,expires_at) VALUES(?,?,?) ON CONFLICT(guild_id) DO UPDATE SET granted_by=excluded.granted_by,expires_at=excluded.expires_at").run(g,by,expiresAt);},
  revokePremium(g){return db.prepare("DELETE FROM premium WHERE guild_id=?").run(g).changes;},
  hasPremium(g){const row=db.prepare("SELECT expires_at FROM premium WHERE guild_id=?").get(g);return !!row&&(!row.expires_at||Date.parse(row.expires_at)>Date.now());},
