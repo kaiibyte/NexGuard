@@ -67,7 +67,7 @@ async function record(entry, guild) {
    if (![ChannelType.GuildText, ChannelType.GuildAnnouncement, ChannelType.GuildForum].includes(channel.type)) continue;
    if (!channel.permissionsFor(botMember)?.has(PermissionFlagsBits.ManageRoles)) { lockFailed++; continue; }
    try {
-    await channel.permissionOverwrites.edit(guild.roles.everyone, { SendMessages: false }, { reason: "NexGuard anti-nuke emergency lockdown" });
+    await channel.permissionOverwrites.edit(guild.roles.everyone, { SendMessages: false, SendMessagesInThreads: false, CreatePublicThreads: false, CreatePrivateThreads: false }, { reason: "NexGuard anti-nuke emergency lockdown" });
     locked++;
    } catch { lockFailed++; }
   }
