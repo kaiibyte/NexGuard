@@ -16,8 +16,8 @@ async function restore(guild, snapshot, dryRun = true) {
   const actions = [];
   const roleMap = new Map([[guild.id, guild.id]]);
   for (const role of snapshot.roles || []) {
-    const existing = guild.roles.cache.find(r => r.name === role.name);
-    if (existing) { roleMap.set(role.name, existing.id); continue; }
+    const existing = guild.roles.cache.get(role.id) || guild.roles.cache.find(r => r.name === role.name);
+    if (existing) { roleMap.set(role.id || role.name, existing.id); continue; }
     actions.push("Create role: " + role.name);
     if (!dryRun) { const created = await guild.roles.create({ name:role.name, color:role.color, hoist:role.hoist, mentionable:role.mentionable, permissions:BigInt(role.permissions), reason:"NexGuard backup recovery" }); roleMap.set(role.id || role.name, created.id); }
   }
